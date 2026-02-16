@@ -1,0 +1,110 @@
+**Schema (SQLite v3.46)**
+
+    CREATE TABLE superstore (
+        item_id INTEGER PRIMARY KEY,
+        item_name TEXT,
+        category TEXT,
+        price DECIMAL(10, 2),
+        stock_quantity INTEGER,
+        average_rating DECIMAL(3, 2)
+    );
+    
+    INSERT INTO superstore (item_id, item_name, category, price, stock_quantity, average_rating)
+    VALUES
+        (1, 'Stainless Steel Cookware Set', 'Kitchen Supplies', 89.99, 50, 4.6),
+        (2, 'Memory Foam Mattress', 'Furnishings', 499.99, 30, 4.8),
+        (3, 'Smart LED TV', 'Electronics', 549.00, 20, 4.5),
+        (4, 'Robot Vacuum Cleaner', 'Appliances', 199.50, 40, 4.3),
+        (5, 'Wireless Bluetooth Speaker', 'Electronics', 39.99, 60, 4.2),
+        (6, 'Non-Stick Baking Set', 'Kitchen Supplies', 29.95, 80, 4.4),
+        (7, 'Cotton Bedding Set', 'Furnishings', 89.00, 25, 4.7),
+        (8, 'Smart Home Security Camera', 'Electronics', 79.95, 15, 4.1),
+        (9, 'Air Purifier', 'Appliances', 129.50, 35, 4.6),
+        (10, 'Premium Coffee Maker', 'Kitchen Supplies', 79.99, 50, 4.9),
+        (11, 'Ergonomic Office Chair', 'Furnishings', 189.00, 20, 4.5),
+        (12, 'Wireless Earbuds', 'Electronics', 49.99, 75, 4.3),
+        (13, 'Slow Cooker', 'Appliances', 49.95, 30, 4.7),
+        (14, 'Cutlery Set', 'Kitchen Supplies', 34.50, 40, 4.4),
+        (15, 'Cozy Throw Blanket', 'Furnishings', 24.99, 100, 4.2);
+        
+        
+    -- © Copyright 2025 Break Into Tech  --
+    
+
+---
+
+**Query #1**
+
+    -- Write a SQL query that orders the items by price.
+    
+    SELECT *
+    FROM superstore
+    ORDER BY price desc;
+
+| item_id | item_name                    | category         | price  | stock_quantity | average_rating |
+| ------- | ---------------------------- | ---------------- | ------ | -------------- | -------------- |
+| 3       | Smart LED TV                 | Electronics      | 549    | 20             | 4.5            |
+| 2       | Memory Foam Mattress         | Furnishings      | 499.99 | 30             | 4.8            |
+| 4       | Robot Vacuum Cleaner         | Appliances       | 199.5  | 40             | 4.3            |
+| 11      | Ergonomic Office Chair       | Furnishings      | 189    | 20             | 4.5            |
+| 9       | Air Purifier                 | Appliances       | 129.5  | 35             | 4.6            |
+| 1       | Stainless Steel Cookware Set | Kitchen Supplies | 89.99  | 50             | 4.6            |
+| 7       | Cotton Bedding Set           | Furnishings      | 89     | 25             | 4.7            |
+| 10      | Premium Coffee Maker         | Kitchen Supplies | 79.99  | 50             | 4.9            |
+| 8       | Smart Home Security Camera   | Electronics      | 79.95  | 15             | 4.1            |
+| 12      | Wireless Earbuds             | Electronics      | 49.99  | 75             | 4.3            |
+| 13      | Slow Cooker                  | Appliances       | 49.95  | 30             | 4.7            |
+| 5       | Wireless Bluetooth Speaker   | Electronics      | 39.99  | 60             | 4.2            |
+| 14      | Cutlery Set                  | Kitchen Supplies | 34.5   | 40             | 4.4            |
+| 6       | Non-Stick Baking Set         | Kitchen Supplies | 29.95  | 80             | 4.4            |
+| 15      | Cozy Throw Blanket           | Furnishings      | 24.99  | 100            | 4.2            |
+
+---
+**Query #2**
+
+    
+    
+    
+    -- Write your own SQL query that will show a statistic about the item prices, like a sum, average, minimum, maximum, or count.
+    
+    SELECT AVG(price)
+    FROM superstore;
+
+| AVG(price)         |
+| ------------------ |
+| 142.35266666666666 |
+
+---
+**Query #3**
+
+    
+    
+    -- Write your own SQL query that will show a statistic about the price for items in the category of "Kitchen Supplies".
+    
+    SELECT AVG(price)
+    FROM superstore
+    WHERE category = 'Kitchen Supplies'
+    ;
+
+| AVG(price)         |
+| ------------------ |
+| 58.607499999999995 |
+
+---
+**Query #4**
+
+    
+    
+    -- How many unique products are there that cost over 100 dollars?
+    
+    SELECT COUNT(DISTINCT item_name)
+    FROM superstore
+    WHERE price >= 100;
+
+| COUNT(DISTINCT item_name) |
+| ------------------------- |
+| 5                         |
+
+---
+
+[View on DB Fiddle](https://www.db-fiddle.com/f/PvBAaQwEUSWAxZCsg4Vmx/243)
