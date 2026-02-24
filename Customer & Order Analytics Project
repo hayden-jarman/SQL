@@ -60,3 +60,49 @@ WHERE Feb.Quantity>2
 AND length(orderid) = 6
 AND orderid <> 'Order ID';
 
+-- 8. How many of each type of headphone were sold in February?
+
+SELECT 
+    product,
+    SUM(quantity) order_count
+FROM FebSales
+WHERE product LIKE '%headphones%'
+AND length(orderid) = 6
+AND orderid <> 'Order ID'
+GROUP BY product;
+
+
+-- 9. What was the average amount spent per account in February?
+
+SELECT
+    SUM(f.quantity * price)/COUNT(c.acctnum) avg_per_account
+FROM FebSales f
+LEFT JOIN customers c
+    ON f.orderID = c.order_id
+WHERE length(f.orderID) = 6
+AND f.orderID <> 'Order ID';
+
+-- 10. Find order ids from Georgia (GA) where the order has an average price greater than $1,000. Only find orders from dates beginning with ‘04/1’. Assume that the dates are stored in the MM/DD/YY HH:MM format.
+
+SELECT
+    orderID
+FROM AprSales
+WHERE orderdate LIKE '04/1%'
+    AND location LIKE '%GA%'
+    AND length(orderid) = 6
+    AND orderid <> 'Order ID'
+GROUP BY orderID
+HAVING AVG(price) > 1000;
+
+-- 11. Which product brought in the most revenue in January and how much revenue did it bring in total?
+
+SELECT
+    product,
+    SUM(price*quantity) revenue
+FROM JanSales
+WHERE length(orderID) = 6
+    AND orderID <> 'Order ID'
+GROUP BY product
+ORDER BY revenue DESC
+LIMIT 1;
+
