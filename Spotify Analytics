@@ -1,0 +1,109 @@
+# For this project, I downloaded Spotify data from Kaggle.
+# Then I created a table to insert Spotify data into.
+# Finally, I performed analytics on the data using SQL. 
+
+#Creating the table: 
+CREATE TABLE BIT_DB.Spotifydata (
+id integer PRIMARY KEY,
+artist_name varchar NOT NULL,
+track_name varchar NOT NULL,
+track_id varchar NOT NULL,
+popularity integer NOT NULL,
+danceability decimal(4,3) NOT NULL,
+energy decimal(4,3) NOT NULL,
+key integer NOT NULL,
+loudness decimal(5,3) NOT NULL,
+mode integer NOT NULL,
+speechiness decimal(5,4) NOT NULL,
+acousticness decimal(6,5) NOT NULL,
+instrumentalness text NOT NULL,
+liveness decimal(5,4) NOT NULL,
+valence decimal(4,3) NOT NULL,
+tempo decimal(6,3) NOT NULL,
+duration_ms integer NOT NULL,
+time_signature integer NOT NULL 
+)
+
+#Then I inserted the Spotify Data .csv into the table.
+
+#Next, I explored the data using the following SQL.
+
+-- 1. Which artists have the most tracks in the Top 50, and what is the average popularity of their charting tracks?
+
+SELECT
+    artist_name,
+    COUNT(*) as track_count,
+    AVG(popularity) as avg_popularity
+FROM Spotifydata
+GROUP BY artist_name
+ORDER BY track_count DESC, avg_popularity DESC;
+
+
+-- 2. Do songs written in a Major key (mode = 1) achieve a higher average popularity and danceability compared to songs in a Minor key (mode = 0)?
+
+SELECT
+    CASE WHEN song_mode = 1 THEN 'Major' ELSE 'Minor' END as key_mode,
+    AVG(popularity) as avg_popularity,
+    AVG(danceability) as avg_danceability
+FROM Spotifydata
+GROUP BY song_mode
+ORDER BY avg_popularity DESC, avg_danceability DESC;
+
+
+-- 3. If we categorize tracks into 'High' (>= 0.75), 'Medium' (0.5 to 0.74), and 'Low' (< 0.5) danceability, what is the count of tracks in each tier?
+
+SELECT
+    CASE 
+        WHEN danceability >= 0.75 THEN 'High'
+        WHEN danceability >= 0.50 THEN 'Medium'
+        ELSE 'Low'
+    END as danceability_tier,
+    COUNT(*) as track_count
+FROM Spotifydata
+GROUP BY
+    CASE 
+        WHEN danceability >= 0.75 THEN 'High'
+        WHEN danceability >= 0.50 THEN 'Medium'
+        ELSE 'Low'
+        END
+ORDER BY track_count DESC;
+
+
+-- 4. Which artists have strictly more than one track on the Top 50 chart, and what is their total combined track duration (in milliseconds)?
+
+SELECT
+    artist_name,
+    COUNT(artist_name) as number_of_tracks,
+    SUM(duration_ms) as total_time_ms
+FROM Spotifydata
+GROUP BY artist_name
+HAVING COUNT(id)>1
+ORDER BY total_time_ms DESC;
+
+
+-- 5. What are the top 10 longest tracks on the chart, and what is their duration converted from milliseconds into a rough "minutes" estimate?
+
+SELECT
+    artist_name,
+    track_name,
+    duration_ms,
+    ROUND((duration_ms / 60000.0),2) as duration_minutes
+FROM Spotifydata
+ORDER BY duration_minutes DESC
+LIMIT 10;
+
+
+-- 6. If a track has an energy > 0.6 and valence > 0.6, label it 'Upbeat'. Otherwise, label it 'Other'. How many tracks fall into the 'Upbeat' category?
+
+SELECT
+    CASE
+        WHEN energy > 0.6 AND valence > 0.6  THEN 'Upbeat'
+        ELSE 'Other'
+        END as mood_category,
+        COUNT(id) as track_count
+FROM Spotifydata
+GROUP BY
+    CASE
+    WHEN energy > 0.6 AND valence > 0.6  THEN 'Upbeat'
+    ELSE 'Other'
+    END;
