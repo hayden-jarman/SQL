@@ -20,7 +20,7 @@ JOIN artists art ON a.ArtistId = art.ArtistId
 WHERE i.InvoiceLineId IS NULL
 ORDER BY bad_tracks_per_artist DESC;
 
-#### OUTPUT (TOP 5 ROWS w/headers):
+#### OUTPUT (TOP 5 ROWS w/Headers):
 
 track_name	artist_name	album_title	bad_tracks_per_artist
 Different World	Iron Maiden	A Matter of Life and Death	90
@@ -73,3 +73,30 @@ Hugh	O'Reilly	hughoreilly@apple.ie	45.62	4
 Frank	Ralston	fralston@gmail.com	43.62	6
 
 ----
+
+### 3) What are the top-selling genres by total revenue? Why it's valuable: Understanding which music genres generate the most revenue directly informs catalog expansion, licensing priorities, and targeted marketing campaigns.
+
+#### SQL SOLUTION:
+
+SELECT
+    g.name,
+    SUM(i.UnitPrice*i.Quantity) as total_revenue,
+    COUNT(i.TrackId) as tracks_sold,
+    SUM(i.UnitPrice * i.Quantity) / COUNT(i.TrackId) AS avg_track_value
+FROM genres g
+JOIN tracks t ON g.GenreId = t.GenreId
+JOIN invoice_items i ON t.TrackId = i.TrackId
+GROUP BY g.name
+ORDER BY total_revenue DESC;
+
+#### OUTPUT (TOP 5 ROWS w/Headers):
+
+Name	total_revenue	tracks_sold	avg_track_value
+Rock	826.65	835	0.99
+Latin	382.14	386	0.99
+Metal	261.36	264	0.99
+Alternative & Punk	241.56	244	0.99
+TV Shows	93.53	47	1.99
+
+----
+
