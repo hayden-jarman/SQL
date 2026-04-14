@@ -20,6 +20,56 @@ JOIN artists art ON a.ArtistId = art.ArtistId
 WHERE i.InvoiceLineId IS NULL
 ORDER BY bad_tracks_per_artist DESC;
 
+#### OUTPUT (TOP 5 ROWS w/headers):
+
+track_name	artist_name	album_title	bad_tracks_per_artist
+Different World	Iron Maiden	A Matter of Life and Death	90
+The Longest Day	Iron Maiden	A Matter of Life and Death	90
+Out of the Shadows	Iron Maiden	A Matter of Life and Death	90
+The Reincarnation of Benjamin Breeg	Iron Maiden	A Matter of Life and Death	90
+The Legacy	Iron Maiden	A Matter of Life and Death	90
+
 ----
 
-### 2
+### 2) Who are the top 10% of customers by Customer Lifetime Value (CLV)? Why it's valuable: Identifies VIP customers. Businesses can use this list to offer loyalty rewards, exclusive early access to new releases, or specialized support to retain their most valuable users.
+
+#### SQL SOLUTION:
+
+WITH CustomerSpending AS (
+    SELECT 
+        c.CustomerId, 
+        c.FirstName, 
+        c.LastName,
+        c.email,
+        SUM(i.Total) AS TotalSpend
+    FROM invoices i
+    JOIN customers c ON i.customerId = c.customerId
+    GROUP BY c.CustomerId, c.FirstName, c.LastName
+),
+CustomerBuckets AS (
+    SELECT *,
+           NTILE(10) OVER(ORDER BY TotalSpend DESC) as bucket_alias
+    FROM CustomerSpending
+    -- Removed the extra GROUP BY here
+)
+SELECT 
+    FirstName, 
+    LastName,
+    Email,
+    TotalSpend,
+    RANK() OVER(ORDER BY TotalSpend DESC) as vip_rank
+FROM CustomerBuckets
+WHERE bucket_alias = 1
+ORDER BY TotalSpend DESC;
+
+#### OUTPUT:
+
+FirstName	LastName	Email	TotalSpend	vip_rank
+Helena	Holý	hholy@gmail.com	49.62	1
+Richard	Cunningham	ricunningham@hotmail.com	47.62	2
+Luis	Rojas	luisrojas@yahoo.cl	46.62	3
+Ladislav	Kovács	ladislav_kovacs@apple.hu	45.62	4
+Hugh	O'Reilly	hughoreilly@apple.ie	45.62	4
+Frank	Ralston	fralston@gmail.com	43.62	6
+
+----
