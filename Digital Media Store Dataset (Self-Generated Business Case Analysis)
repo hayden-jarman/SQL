@@ -1,0 +1,25 @@
+# Digital Media Store Dataset
+
+## This project includes 7 self-generated and solved business questions/problems, focusing on a dataset for a digital media store and includes tables for artists, albums, media tracks, invoices, and customers.
+
+----
+
+### 1) Which tracks in the catalog have never been purchased? **Why it's valuable:** Highlights "dead weight" in the inventory. If the company pays hosting or licensing fees for these tracks, identifying them allows for strategic removal or aggressive discount promotions.
+
+#### SQL SOLUTION:
+
+SELECT
+    t.name as track_name,
+    art.name as artist_name,
+    a.title as album_title,
+    COUNT(t.TrackId) OVER(PARTITION BY art.Name) as bad_tracks_per_artist
+FROM tracks t
+LEFT JOIN invoice_items i ON t.TrackId = i.TrackId
+JOIN albums a ON t.AlbumId = a.AlbumId
+JOIN artists art ON a.ArtistId = art.ArtistId
+WHERE i.InvoiceLineId IS NULL
+ORDER BY bad_tracks_per_artist DESC;
+
+----
+
+### 2
