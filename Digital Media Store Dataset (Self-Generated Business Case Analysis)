@@ -100,3 +100,35 @@ TV Shows	93.53	47	1.99
 
 ----
 
+### 4) Which artists have the highest organic popularity based on playlist inclusions? Why it's valuable: Playlist inclusions indicate user engagement and organic popularity that may not perfectly correlate with direct sales. This helps predict future hits and informs which artists to feature on the store's homepage.
+
+#### SQL SOLUTION:
+
+SELECT
+    a.name,
+    COUNT(pt.TrackId) as playlist_inclusions
+FROM artists a
+JOIN albums aa ON a.ArtistId = aa.ArtistId
+JOIN tracks t ON aa.AlbumId = t.AlbumId
+JOIN playlist_track pt ON t.TrackId = pt.TrackId
+GROUP BY a.name
+ORDER BY playlist_inclusions DESC
+LIMIT 10;
+
+#### OUTPUT:
+
+Name	playlist_inclusions
+Iron Maiden	516
+U2	333
+Metallica	296
+Led Zeppelin	252
+Deep Purple	226
+Lost	184
+Pearl Jam	177
+Faith No More	145
+Eric Clapton	145
+Lenny Kravitz	143
+
+----
+
+
