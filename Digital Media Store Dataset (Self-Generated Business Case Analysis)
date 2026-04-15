@@ -131,4 +131,38 @@ Lenny Kravitz	143
 
 ----
 
+### 5) Does the Pareto Principle (80/20 rule) apply to our track sales? Why it's valuable: Determines if the business is overly reliant on a tiny fraction of its catalog for the vast majority of its revenue. A high concentration of revenue in a few tracks presents a risk if those licenses are lost.
 
+#### SQL SOLUTION:
+
+WITH TrackSales AS (
+    SELECT 
+        t.TrackId,
+        t.Name,
+        SUM(COALESCE(i.UnitPrice * i.Quantity, 0)) AS TrackRevenue
+    FROM tracks t
+    LEFT JOIN invoice_items i ON t.TrackId = i.TrackId
+    GROUP BY t.TrackId, t.Name
+)
+SELECT 
+    Name,
+    TrackRevenue,
+    -- 1. Cumulative Percentage of Revenue
+    ROUND(SUM(TrackRevenue) OVER (ORDER BY TrackRevenue DESC) / 
+    SUM(TrackRevenue) OVER (),2) AS cumulative_revenue_pct,
+    
+    -- 2. Which percentile of the catalog is this?
+    NTILE(100) OVER (ORDER BY TrackRevenue DESC) AS catalog_percentile
+FROM TrackSales
+ORDER BY TrackRevenue DESC;
+
+#### OUTPUT (TOP 5 ROWS w/Headers):
+
+Name	TrackRevenue	cumulative_revenue_pct	catalog_percentile
+The Woman King	3.98	0.01	1
+The Fix	3.98	0.01	1
+Walkabout	3.98	0.01	1
+Hot Girl	3.98	0.01	1
+Gay Witch Hunt	3.98	0.01	1
+
+----
